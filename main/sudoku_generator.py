@@ -6,7 +6,7 @@ class SudokuBoard:
         self.board = [[0 for y in range(9)] for x in range(9)]
         self.initial_fill()
 
-    def initial_fill(self, fill_number=33):
+    def initial_fill(self, fill_number=9):
         filled = set()
         for i in range(fill_number):
             in_filled = False
@@ -59,6 +59,24 @@ class SudokuBoard:
                     return True
         return False
 
+    def solve_board(self):
+        for row in range(9):
+            for column in range(9):
+                if self.board[row][column] == 0:
+                    for value in range(1, 10):
+                        if not self.checkRow(value, row) and not self.checkColumn(value, column) and \
+                                not self.checkBox(value, row, column):
+                            self.board[row][column] = value
+                            if self.solve_board():
+                                return True
+                            else:
+                                self.board[row][column] = 0
+                    return False
+        return True
+
 
 sb = SudokuBoard()
+sb.print()
+print("*******************************************")
+sb.solve_board()
 sb.print()
