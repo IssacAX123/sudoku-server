@@ -2,9 +2,13 @@ from random import randint
 
 
 class SudokuBoard:
-    def __init__(self):
-        self.board = [[0 for y in range(9)] for x in range(9)]
-        self.initial_fill()
+    def __init__(self, board=None):
+        if board is None:
+            self.board = [[0 for y in range(9)] for x in range(9)]
+            self.initial_fill()
+        else:
+            self.board = board
+
 
     def initial_fill(self, fill_number=9):
         filled = set()
@@ -74,9 +78,19 @@ class SudokuBoard:
                     return False
         return True
 
+    def create_playable_board(self):
+        play_board = self.board.copy()
+        filled = [(randint(0,8), randint(0, 8)) for x in range(81- randint(30, 40))]
+        for coord in filled:
+            play_board[coord[0]][coord[1]] = 0
+        return play_board
+
 
 sb = SudokuBoard()
-sb.print()
-print("*******************************************")
 sb.solve_board()
 sb.print()
+gb = SudokuBoard(sb.create_playable_board())
+gb.print()
+
+
+
