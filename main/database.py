@@ -18,23 +18,24 @@ class Database:
                 }
         self.collection.insert_one(post)
 
-    def add_player_to_game(self, code, player):
-        query = {"code": code}
-        self.collection.update_one(query, {"$set": {"players": player}})
+    def update_player_in_game(self, code, players):
+        query = {"_id": code}
+        self.collection.update_one(query, {"$set": {"players": players}})
 
 
-    def update_game(self, code, playing):
-        query = {"code": code}
-        self.collection.update_one(query, {"$set": {"playing_board": playing}})
+    def update_game(self, code, location, number):
+        query = {"_id": code}
+        index = f"playing_board.{location[0]}.{location[1]}"
+        self.collection.update_one(query, {"$set": {index: number}})
         return self.get_game(code)
 
     def get_game(self, code):
-        query = {"code": code}
+        query = {"_id": code}
         self.collection.find(query)
 
 
     def delete_game(self, code):
-        query = {"code": code}
+        query = {"_id": code}
         self.collection.delete_one(query)
 
     def get_all_games(self):
