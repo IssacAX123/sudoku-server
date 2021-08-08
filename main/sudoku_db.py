@@ -1,4 +1,4 @@
-from db_details import CONNECTION
+from main.db_details import CONNECTION
 import pymongo
 from pymongo import MongoClient
 
@@ -18,10 +18,16 @@ class Database:
                 }
         self.collection.insert_one(post)
 
-    def update_player_in_game(self, code, players):
+    def add_player_in_game(self, code, player):
         query = {"_id": code}
-        self.collection.update_one(query, {"$set": {"players": players}})
+        self.collection.update_one(query, {"$push": {"players": player}})
 
+    def remove_player_in_game(self, code, player):
+        query = {"_id": code}
+        self.collection.update_one(query, {"$pull": {"players": player}})
+        length = len(self.collection.find(query)["players"])
+        if length == 0:
+            self.delete_game(code)
 
     def update_game(self, code, location, number):
         query = {"_id": code}
@@ -33,7 +39,6 @@ class Database:
         query = {"_id": code}
         self.collection.find(query)
 
-
     def delete_game(self, code):
         query = {"_id": code}
         self.collection.delete_one(query)
@@ -41,5 +46,10 @@ class Database:
     def get_all_games(self):
         ids = self.collection.find().distinct('_id')
         return [str(id) for id in ids]
+
+    def get_players_in_game(self, code):
+        query = {"_id": code}
+        return self.collection.find(query)["players"]
+
 
 

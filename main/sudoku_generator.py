@@ -2,12 +2,14 @@ from random import randint
 
 
 class SudokuBoard:
-    def __init__(self, board=None):
-        if board is None:
+    def __init__(self, user_board=1):
+        if user_board is 1:
             self.board = [[0 for y in range(9)] for x in range(9)]
+            print(self.board)
             self.initial_fill()
-        else:
-            self.board = board
+        if user_board is not 1:
+            self.board = user_board
+            print(self.board)
 
 
     def initial_fill(self, fill_number=9):
@@ -84,6 +86,9 @@ class SudokuBoard:
         for coord in filled:
             play_board[coord[0]][coord[1]] = 0
         return play_board
+
+    def get_board(self):
+        return self.board
 
     def encode(self):
         return self.board

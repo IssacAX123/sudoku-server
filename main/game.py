@@ -1,15 +1,17 @@
 import time
-from sudoku_generator import SudokuBoard
+from main.sudoku_generator import SudokuBoard
 
 class Game:
     def __init__(self, db, creator):
         self.db = db
         self.code = self.generate_code()
-        self.solved_board = SudokuBoard().solve_board()
+        self.solved_board = SudokuBoard()
+        self.solved_board.solve_board()
+        self.solved_board = self.solved_board.get_board()
         self.playing_board = SudokuBoard(self.solved_board).create_playable_board()
         self.players = [creator]
         self.og_board = self.playing_board.copy()
-
+        self.add_to_db()
 
     def generate_code(self):
         finished  = False
@@ -18,7 +20,6 @@ class Game:
             now = str(time.time())
             now = now.replace('.', "")
             now = now[-1:-11:-1]
-            print("now",len(now))
             code = ""
             for start in range(3):
                 sum = 0
@@ -36,25 +37,15 @@ class Game:
                 finished = True
         return code
 
-    def add_to_db(self):
-        self.db.add_game(self.code, self.solved_board, self.playing_board, self.og_board, self.players[0])
-
-    def update_player_in_db(self):
-        if not self.players:
-            self.delete_from_db()
-        else:
-            self.db.update_player_in_db(self.code, self.solved_board, self.playing_board, self.og_board)
-
-    def update_db(self, location, number):
-        self.db.update_game(self.code, location, number)
-
-    def delete_from_db(self):
-        self.db.delete_game(self.code)
+    def get_code(self):
+        return self.code
 
     def get_all_games(self):
         return self.db.get_all_games()
 
+    def add_to_db(self):
+        self.db.add_game(self.code, self.solved_board, self.playing_board, self.og_board, self.players[0])
 
 
 
-Game()
+
