@@ -85,9 +85,8 @@ class SudokuBoard:
             play_board[coord[0]][coord[1]] = 0
         return play_board
 
-    @staticmethod
     def encode(self):
-
+        return self.board
 
 
 

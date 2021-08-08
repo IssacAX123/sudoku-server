@@ -4,8 +4,9 @@ from sudoku_generator import SudokuBoard
 class Game:
     def __init__(self):
         self.code = self.generate_code()
-        self.solved_board = SudokuBoard()
-        self.game_board = SudokuBoard(self.solved_board.solve_board())
+        self.solved_board = SudokuBoard().solve_board()
+        self.game_board = SudokuBoard(self.solved_board).create_playable_board()
+        self.og_board = self.game_board.copy()
 
     def generate_code(self):
         now = str(time.time())
@@ -27,6 +28,14 @@ class Game:
         code += str(int(now[-1])*int(now[1]))[-1]
         return code
 
+    def add_to_db(self):
+        pass
+
+    def update_db(self):
+        pass
+
+    def delete_from_db(self):
+        pass
 
 
 
