@@ -8,11 +8,37 @@ class Database:
         db = cluster["sudoku-server"]
         self.collection = db["running_games"]
 
-    def add_game(self, code, solved, playing, og):
-        pass
+    def add_game(self, code, solved, playing, og, creator):
+        post = {
+            "_id": code,
+            "solved_board": solved,
+            "playing_board": playing,
+            "og_board": og,
+            "players": [creator]
+                }
+        self.collection.insert_one(post)
+
+    def add_player_to_game(self, code, player):
+        query = {"code": code}
+        self.collection.update_one(query, {"$set": {"players": player}})
+
 
     def update_game(self, code, playing):
-        pass
+        query = {"code": code}
+        self.collection.update_one(query, {"$set": {"playing_board": playing}})
+        return self.get_game(code)
+
+    def get_game(self, code):
+        query = {"code": code}
+        self.collection.find(query)
+
 
     def delete_game(self, code):
-        pass
+        query = {"code": code}
+        self.collection.delete_one(query)
+
+    def get_all_games(self):
+        ids = self.collection.find().distinct('_id')
+        return [str(id) for id in ids]
+
+
