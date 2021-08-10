@@ -1,5 +1,4 @@
 from main.db_details import CONNECTION
-import pymongo
 from pymongo import MongoClient
 
 class Database:
@@ -37,7 +36,7 @@ class Database:
 
     def get_game(self, code):
         query = {"_id": code}
-        self.collection.find(query)
+        return self.collection.find_one(query)
 
     def delete_game(self, code):
         query = {"_id": code}
@@ -49,7 +48,8 @@ class Database:
 
     def get_players_in_game(self, code):
         query = {"_id": code}
-        return self.collection.find(query)["players"]
+        result = self.collection.find_one(query, {"players": 1})
+        return result["players"]
 
 
 

@@ -1,20 +1,37 @@
 from random import randint
+import copy
 
 
 class SudokuBoard:
     def __init__(self, user_board=1):
-        if user_board is 1:
+        if user_board == 1:
             self.board = [[0 for y in range(9)] for x in range(9)]
-            print(self.board)
             self.initial_fill()
-        if user_board is not 1:
+        if user_board != 1:
             self.board = user_board
-            print(self.board)
 
 
-    def initial_fill(self, fill_number=9):
+    def initial_fill(self, fill_number=8):
         filled = set()
-        for i in range(fill_number):
+        x_coord = 0
+        y_coord = randint(6, 8)
+        value = randint(1, 9)
+        self.board[x_coord][y_coord] = value
+        filled.add((x_coord, y_coord))
+        for i in range(fill_number//2):
+            in_filled = False
+            while not in_filled:
+                x_coord = i
+                y_coord = i
+                if (x_coord, y_coord) not in filled:
+                    value = randint(1, 9)
+                    if not self.checkRow(value, x_coord) and not self.checkColumn(value, y_coord) and \
+                        not self.checkBox(value, x_coord, y_coord):
+                        self.board[x_coord][y_coord] = value
+                        filled.add((x_coord, y_coord))
+                        in_filled = True
+
+        for i in range(fill_number//2):
             in_filled = False
             while not in_filled:
                 x_coord = randint(0, 8)
@@ -22,9 +39,11 @@ class SudokuBoard:
                 if (x_coord, y_coord) not in filled:
                     value = randint(1, 9)
                     if not self.checkRow(value, x_coord) and not self.checkColumn(value, y_coord) and \
-                        not self.checkBox(value, x_coord,y_coord):
+                            not self.checkBox(value, x_coord, y_coord):
                         self.board[x_coord][y_coord] = value
+                        filled.add((x_coord, y_coord))
                         in_filled = True
+
 
     def print(self):
         print('  1 2 3   4 5 6   7 8 9')
@@ -81,7 +100,7 @@ class SudokuBoard:
         return True
 
     def create_playable_board(self):
-        play_board = self.board.copy()
+        play_board = copy.deepcopy(self.board)
         filled = [(randint(0,8), randint(0, 8)) for x in range(81- randint(30, 40))]
         for coord in filled:
             play_board[coord[0]][coord[1]] = 0
