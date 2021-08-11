@@ -24,7 +24,7 @@ class Database:
     def remove_player_in_game(self, code, player):
         query = {"_id": code}
         self.collection.update_one(query, {"$pull": {"players": player}})
-        length = len(self.collection.find(query)["players"])
+        length = len(self.collection.find_one(query)["players"])
         if length == 0:
             self.delete_game(code)
 
@@ -49,7 +49,10 @@ class Database:
     def get_players_in_game(self, code):
         query = {"_id": code}
         result = self.collection.find_one(query, {"players": 1})
-        return result["players"]
+        if result is not None:
+            return result["players"]
+        else:
+            return []
 
 
 

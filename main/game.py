@@ -47,3 +47,5 @@ class Game:
 
     def add_to_db(self):
         self.db.add_game(self.code, self.solved_board, self.playing_board, self.og_board, self.players[0])
+
+

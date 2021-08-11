@@ -3,11 +3,11 @@ import copy
 
 
 class SudokuBoard:
-    def __init__(self, user_board=1):
-        if user_board == 1:
+    def __init__(self, user_board=None):
+        if user_board is None:
             self.board = [[0 for y in range(9)] for x in range(9)]
             self.initial_fill()
-        if user_board != 1:
+        if user_board is not None:
             self.board = user_board
 
 
@@ -25,8 +25,8 @@ class SudokuBoard:
                 y_coord = i
                 if (x_coord, y_coord) not in filled:
                     value = randint(1, 9)
-                    if not self.checkRow(value, x_coord) and not self.checkColumn(value, y_coord) and \
-                        not self.checkBox(value, x_coord, y_coord):
+                    if not self.checkRow(self.board, value, x_coord) and not self.checkColumn(self.board, value, y_coord) and \
+                            not self.checkBox(self.board, value, x_coord, y_coord):
                         self.board[x_coord][y_coord] = value
                         filled.add((x_coord, y_coord))
                         in_filled = True
@@ -38,8 +38,9 @@ class SudokuBoard:
                 y_coord = randint(0, 8)
                 if (x_coord, y_coord) not in filled:
                     value = randint(1, 9)
-                    if not self.checkRow(value, x_coord) and not self.checkColumn(value, y_coord) and \
-                            not self.checkBox(value, x_coord, y_coord):
+                    if not self.checkRow(self.board, value, x_coord) and not self.checkColumn(self.board, value,
+                                                                                              y_coord) and \
+                            not self.checkBox(self.board, value, x_coord, y_coord):
                         self.board[x_coord][y_coord] = value
                         filled.add((x_coord, y_coord))
                         in_filled = True
@@ -63,24 +64,27 @@ class SudokuBoard:
                     if (row_index + 1) % 3 == 0:
                         print(' ', '-' * 21)
 
-    def checkRow(self, value, row):
+    @staticmethod
+    def checkRow(board, value, row):
         for y in range(9):
-            if value == self.board[row][y]:
+            if value == board[row][y]:
                 return True
         return False
 
-    def checkColumn(self, value, column):
+    @staticmethod
+    def checkColumn(board, value, column):
         for x in range(9):
-            if value == self.board[x][column]:
+            if value == board[x][column]:
                 return True
         return False
 
-    def checkBox(self, value, row, column):
+    @staticmethod
+    def checkBox(board, value, row, column):
         row_start = row - row % 3
         column_start = column - column % 3
-        for x in range(row_start, row_start+3):
-            for y in range(column_start, column_start+3):
-                if value == self.board[x][y]:
+        for x in range(row_start, row_start + 3):
+            for y in range(column_start, column_start + 3):
+                if value == board[x][y]:
                     return True
         return False
 
@@ -89,8 +93,8 @@ class SudokuBoard:
             for column in range(9):
                 if self.board[row][column] == 0:
                     for value in range(1, 10):
-                        if not self.checkRow(value, row) and not self.checkColumn(value, column) and \
-                                not self.checkBox(value, row, column):
+                        if not self.checkRow(self.board, value, row) and not self.checkColumn(self.board, value, column) and \
+                                not self.checkBox(self.board, value, row, column):
                             self.board[row][column] = value
                             if self.solve_board():
                                 return True
