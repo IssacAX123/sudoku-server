@@ -76,16 +76,19 @@ async def server(websocket, path):
                     await connection.send(json.dumps(errors_json))
 
     except websockets.ConnectionClosedError:
-        print("connection closed")
-        name = str(websocket.remote_address[0]) + "-" + str(websocket.remote_address[1])
-        code = CONNECTED[name]["code"]
-        DB.remove_player_in_game(code, name)
-        player_update_json = {"response": "PLAYER_DISCONNECTED", "name": name}
-        players_to_broadcast = DB.get_players_in_game(code)
-        for player in players_to_broadcast:
-            if player != name:
-                connection = CONNECTED[player]["websocket"]
-                await connection.send(json.dumps(player_update_json))
+        try:
+            print("connection closed")
+            name = str(websocket.remote_address[0]) + "-" + str(websocket.remote_address[1])
+            code = CONNECTED[name]["code"]
+            DB.remove_player_in_game(code, name)
+            player_update_json = {"response": "PLAYER_DISCONNECTED", "name": name}
+            players_to_broadcast = DB.get_players_in_game(code)
+            for player in players_to_broadcast:
+                if player != name:
+                    connection = CONNECTED[player]["websocket"]
+                    await connection.send(json.dumps(player_update_json))
+        except:
+            pass
 
 
 
